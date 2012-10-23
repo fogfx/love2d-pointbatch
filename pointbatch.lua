@@ -69,7 +69,9 @@ end
 ------------------------------------------------------------------------------
 -- Extensions :(
 ------------------------------------------------------------------------------
+local glGenBuffers, glDeleteBuffer, glBindBuffer, glBufferData, glBufferSubData
 local proc
+if ffi.os ~= "OSX" then
 if ffi.os == "Windows" then -- extensions argh
 	ffi.cdef "void *wglGetProcAddress(const char *name)"
 	proc = gl.wglGetProcAddress
@@ -86,12 +88,18 @@ ffi.cdef [[
 	typedef void (*PFNGLBUFFERSUBDATAPROC) (GLenum target, GLintptr offset, GLsizeiptr size, const GLvoid *data);
 ]]
 
-local glGenBuffers    = anal(ffi.cast("PFNGLGENBUFFERSPROC",    proc "glGenBuffers"))
-local glDeleteBuffer  = anal(ffi.cast("PFNGLDELETEBUFFERPROC",  proc "glDeleteBuffer"))
-local glBindBuffer    = anal(ffi.cast("PFNGLBINDBUFFERPROC",    proc "glBindBuffer"))
-local glBufferData    = anal(ffi.cast("PFNGLBUFFERDATAPROC",    proc "glBufferData"))
-local glBufferSubData = anal(ffi.cast("PFNGLBUFFERSUBDATAPROC", proc "glBufferSubData"))
-
+glGenBuffers    = anal(ffi.cast("PFNGLGENBUFFERSPROC",    proc "glGenBuffers"))
+glDeleteBuffer  = anal(ffi.cast("PFNGLDELETEBUFFERPROC",  proc "glDeleteBuffer"))
+glBindBuffer    = anal(ffi.cast("PFNGLBINDBUFFERPROC",    proc "glBindBuffer"))
+glBufferData    = anal(ffi.cast("PFNGLBUFFERDATAPROC",    proc "glBufferData"))
+glBufferSubData = anal(ffi.cast("PFNGLBUFFERSUBDATAPROC", proc "glBufferSubData"))
+else
+glGenBuffers    = gl.glGenBuffers
+glDeleteBuffer  = gl.glDeleteBuffers
+glBindBuffer    = gl.glBindBuffer
+glBufferData    = gl.glBufferData
+glBufferSubData = gl.glBufferSubData
+end
 ------------------------------------------------------------------------------
 -- FFI/Object lists
 ------------------------------------------------------------------------------
