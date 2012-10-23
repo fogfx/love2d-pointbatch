@@ -69,31 +69,28 @@ end
 ------------------------------------------------------------------------------
 -- Extensions :(
 ------------------------------------------------------------------------------
--- not supposed to localize cdata function references but don't have much choice here
-local glGenBuffers, glDeleteBuffers, glBindBuffer, glBufferData, glGetBufferSubData
+local proc
 if ffi.os == "Windows" then -- extensions argh
-	ffi.cdef [[
-		void *wglGetProcAddress(const char *name);
-		typedef void (*PFNGLGENBUFFERSPROC)    (GLsizei n, GLuint *buffers);
-		typedef void (*PFNGLDELETEBUFFERPROC)  (GLsizei n, const GLuint *buffers);
-		typedef void (*PFNGLBINDBUFFERPROC)    (GLenum target, GLuint buffer);
-		typedef void (*PFNGLBUFFERDATAPROC)    (GLenum target, GLsizeiptr size, const GLvoid *data, GLenum usage);
-		typedef void (*PFNGLBUFFERSUBDATAPROC) (GLenum target, GLintptr offset, GLsizeiptr size, const GLvoid *data);
-	]]
-	
-	glGenBuffers    = anal(ffi.cast("PFNGLGENBUFFERSPROC",    gl.wglGetProcAddress "glGenBuffers"))
-	glDeleteBuffer  = anal(ffi.cast("PFNGLDELETEBUFFERPROC",  gl.wglGetProcAddress "glDeleteBuffer"))
-	glBindBuffer    = anal(ffi.cast("PFNGLBINDBUFFERPROC",    gl.wglGetProcAddress "glBindBuffer"))
-	glBufferData    = anal(ffi.cast("PFNGLBUFFERDATAPROC",    gl.wglGetProcAddress "glBufferData"))
-	glBufferSubData = anal(ffi.cast("PFNGLBUFFERSUBDATAPROC", gl.wglGetProcAddress "glBufferSubData"))
-else
-	local function idkwhattodoifthisfails (name) assert(pcall(function () return gl[name] end), name .. " is probably an extension function which i don't know how to access on this platform :(") return anal(gl[name]) end
-	glGenBuffers    = idkwhattodoifthisfails "glGenBuffers"
-	glDeleteBuffer  = idkwhattodoifthisfails "glDeleteBuffer"
-	glBindBuffer    = idkwhattodoifthisfails "glBindBuffer"
-	glBufferData    = idkwhattodoifthisfails "glBufferData"
-	glBufferSubData = idkwhattodoifthisfails "glBufferSubData"
+	ffi.cdef "void *wglGetProcAddress(const char *name)"
+	proc = gl.wglGetProcAddress
+elseif ffi.os == "Linux" then
+	ffi.cdef "void *glXGetProcAddress(const char *name)"
+	proc = gl.glXGetProcAddress
 end
+
+ffi.cdef [[
+	typedef void (*PFNGLGENBUFFERSPROC)    (GLsizei n, GLuint *buffers);
+	typedef void (*PFNGLDELETEBUFFERPROC)  (GLsizei n, const GLuint *buffers);
+	typedef void (*PFNGLBINDBUFFERPROC)    (GLenum target, GLuint buffer);
+	typedef void (*PFNGLBUFFERDATAPROC)    (GLenum target, GLsizeiptr size, const GLvoid *data, GLenum usage);
+	typedef void (*PFNGLBUFFERSUBDATAPROC) (GLenum target, GLintptr offset, GLsizeiptr size, const GLvoid *data);
+]]
+
+local glGenBuffers    = anal(ffi.cast("PFNGLGENBUFFERSPROC",    proc "glGenBuffers"))
+local glDeleteBuffer  = anal(ffi.cast("PFNGLDELETEBUFFERPROC",  proc "glDeleteBuffer"))
+local glBindBuffer    = anal(ffi.cast("PFNGLBINDBUFFERPROC",    proc "glBindBuffer"))
+local glBufferData    = anal(ffi.cast("PFNGLBUFFERDATAPROC",    proc "glBufferData"))
+local glBufferSubData = anal(ffi.cast("PFNGLBUFFERSUBDATAPROC", proc "glBufferSubData"))
 
 ------------------------------------------------------------------------------
 -- FFI/Object lists
