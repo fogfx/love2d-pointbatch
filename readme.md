@@ -1,4 +1,4 @@
-proposal for an api to add per-vertex colors and coordinates to love2d
+proposal for an api to add per-vertex colors and coordinates to love2d. currently a WIP
 
 the above features are pretty awesome
 
