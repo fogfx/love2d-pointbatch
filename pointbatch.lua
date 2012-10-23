@@ -15,7 +15,7 @@
 assert(jit and jit.version_num >= 20000)
 
 local ffi = require 'ffi'
-local glf = require "OpenGL"
+local glf = require "ufo.ffi.OpenGL"
 
 -- testing only
 local function anal (f) 
