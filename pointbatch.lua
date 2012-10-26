@@ -175,6 +175,13 @@ local TransformMatrix = ffi.metatype("struct { GLfloat elements[16]; }", {
 	}
 })
 
+do -- TEMP: dump extension/gl info
+	local ext = io.open("./glext.txt", "w")
+	ext:write(ffi.string(gl.glGetString(gl.GL_VENDOR)) .. " " .. ffi.string(gl.glGetString(gl.GL_RENDERER)) .. " (" .. ffi.string(gl.glGetString(gl.GL_VERSION)) .. ")\n")
+	ext:write(ffi.string(gl.glGetString(gl.GL_EXTENSIONS)):gsub(" ", "\n"))
+	ext:close()
+end
+
 local pointbatches = setmetatable({ }, { __mode = "k" })
 
 ------------------------------------------------------------------------------
