@@ -652,16 +652,15 @@ local function drawpointbatch (p, x, y, r, sx, sy, ox, oy, kx, ky)
 	gl.glEnableClientState(gl.GL_TEXTURE_COORD_ARRAY)
 	
 	glBindBuffer(gl.GL_ARRAY_BUFFER, p.vbuffer)
-	glBindBuffer(gl.GL_ELEMENT_ARRAY_BUFFER, p.ibuffer)
-	
 	gl.glTexCoordPointer(2, gl.GL_FLOAT,         pointsize, offsets.texcoord)
 	gl.glColorPointer   (4, gl.GL_UNSIGNED_BYTE, pointsize, offsets.color)
 	gl.glVertexPointer  (2, gl.GL_FLOAT,         pointsize, offsets.position)
 	
+	glBindBuffer(gl.GL_ELEMENT_ARRAY_BUFFER, p.ibuffer)
 	gl.glDrawElements(gl.GL_TRIANGLES, p.nindices, gl.GL_UNSIGNED_INT, ffi.cast("const GLvoid *", 0))
 	
-	glBindBuffer(gl.GL_ARRAY_BUFFER, 0)
 	glBindBuffer(gl.GL_ELEMENT_ARRAY_BUFFER, 0)
+	glBindBuffer(gl.GL_ARRAY_BUFFER, 0)
 	
 	gl.glDisableClientState(gl.GL_TEXTURE_COORD_ARRAY)
 	gl.glDisableClientState(gl.GL_COLOR_ARRAY)
