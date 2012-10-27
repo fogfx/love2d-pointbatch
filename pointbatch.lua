@@ -23,15 +23,20 @@ local function anal (f)
 		local r = f(...)
 		local e = glf.glGetError()
 		if e ~= 0 then
-			local fargs = { n = select("#", ...), ... }
-			for i = 1, fargs.n do
-				if type(fargs[i]) == "cdata" then
-					fargs[i] = ("%s (%s)"):format(tostring(fargs[i]), tostring(tonumber(fargs[i]) or "N/A"))
-				else
-					fargs[i] = tostring(fargs[i])
+			while e ~= 0 do
+				local fargs = { n = select("#", ...), ... }
+				for i = 1, fargs.n do
+					if type(fargs[i]) == "cdata" then
+						fargs[i] = ("%s (%s)"):format(tostring(fargs[i]), tostring(tonumber(fargs[i]) or "N/A"))
+					else
+						fargs[i] = tostring(fargs[i])
+					end
 				end
+				
+				print("GL Error: " .. ("0x%x\nARGS: %s"):format(e, table.concat(fargs, ", ")), 2)
+				e = glf.glGetError()
 			end
-			error("GL Error: " .. ("0x%x\nARGS: %s"):format(e, table.concat(fargs, ", ")), 2)
+			error("GL errors have occurred: see console")
 		end
 		return r
 	end
