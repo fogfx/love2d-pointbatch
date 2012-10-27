@@ -433,7 +433,7 @@ function pointbatch:getIndices (first, last)
 	
 	assert(first <= last, "starting index exceeds ending index")
 	assert(first >= 1, "starting index out of range")
-	assert(last <= self.maxindices, "ending index out of range")
+	assert(last <= self.nindices, "ending index out of range")
 	
 	local indexlist = { }
 	local indices = self.indices
@@ -448,9 +448,9 @@ end
 function pointbatch:clearIndices ()
 	self.nindices  = 0
 	
-	ffi.fill(self.indices, 0, self.maxindices * indexsize)
+	ffi.fill(self.indices, 0, self.nindices * indexsize)
 	
-	self:_updateIndexBuffer(0, self.indices, self.maxindices)
+	self:_updateIndexBuffer(0, self.indices, self.nindices)
 end
 
 function pointbatch:getIndexCount ()
